@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Welcome to Food-Court-G4{% endblock %}</title>
+    <title>{% block title %}Grit Dine{% endblock %}</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <style>
         .header {
@@ -40,12 +40,12 @@
             {% if current_user.is_authenticated and current_user.role == 'owner' %}
                 {{ current_user.restaurant.name }}
             {% else %}
-           Food-Court-G4
+                Grit 
             {% endif %}
         </a>
         
         <div class="flex items-center lg:ml-auto">
-            {% if current_user.is_authenticated and current_user.role == 'owner' %}
+             {% if current_user.is_authenticated and current_user.role == 'owner' %}
             {% if restaurant.logo %}
             <button id="avatar-button" class="focus:outline-none">
                 <img src="{{ url_for('static', filename='logos/' ~ restaurant.logo) }}" alt="User Avatar" class="w-8 h-8 rounded-full">

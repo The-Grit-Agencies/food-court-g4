@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Welcome to Food-Court-G4{% endblock %}</title>
+    <title>{% block title %}Grit Dine{% endblock %}</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <style>
         .header {
@@ -72,10 +72,9 @@
        
         <a href="{{ url_for('main.home') }}" class="text-xl font-bold mx-auto lg:mx-0">Grit Dine</a>
 
-        
+        {% if current_user.is_authenticated %}
         <div class="flex items-center lg:ml-auto">
-            
-            {% if current_user.is_authenticated %}
+           
                 <button id="avatar-button" class="focus:outline-none">
                     <img src="https://img.freepik.com/free-photo/androgynous-avatar-non-binary-queer-person_23-2151100278.jpg?t=st=1722710635~exp=1722714235~hmac=0ead666d88e524a63aa04c796115961525fe927f68ab3b3d0b79b7811931ca8f&w=740" alt="User Avatar" class="w-8 h-8 rounded-full">
                 </button>

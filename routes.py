@@ -13,10 +13,15 @@ main = Blueprint('main', __name__)
 
 @main.route('/')
 def home():
-    menu_items = MenuItem.query.all()  
-    restaurants = Restaurant.query.all()  
-    restaurant = current_user.restaurant
+    menu_items = MenuItem.query.all()
+    restaurants = Restaurant.query.all()
+    
+    restaurant = None
+    if current_user.is_authenticated and hasattr(current_user, 'restaurant'):
+        restaurant = current_user.restaurant
+    
     return render_template('home.html', menu_items=menu_items, restaurants=restaurants, restaurant=restaurant)
+
 
 
 @main.route('/user/register', methods=['GET', 'POST'])
@@ -128,23 +133,23 @@ def admin_dashboard():
     if current_user.role != 'admin':
         flash('Access unauthorized!', 'danger')
         return redirect(url_for('main.home'))
-    return render_template('/admin/admin_dashboard.html', username=current_user.username, email=current_user.email)
+    restaurant = current_user.restaurant
+    return render_template('/admin/admin_dashboard.html', username=current_user.username, email=current_user.email, restaurant=restaurant)
 
 @main.route('/owner/menu', methods=['GET', 'POST'])
 @login_required
 def manage_menu():
-    if current_user.role != 'owner':
+    if current_user.is_anonymous or current_user.role != 'owner':
         flash('Access unauthorized!', 'danger')
+        return redirect(url_for('main.home'))
+    
+    restaurant = current_user.restaurant
+    if not restaurant:
+        flash('No restaurant associated with this account!', 'danger')
         return redirect(url_for('main.home'))
     
     form = MenuItemForm()
     if form.validate_on_submit():
-        restaurant = current_user.restaurant
-        if not restaurant:
-            flash('No restaurant associated with this account!', 'danger')
-            return redirect(url_for('main.home'))
-        
-        # Save the image file
         if form.image.data:
             filename = secure_filename(form.image.data.filename)
             filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
@@ -165,8 +170,9 @@ def manage_menu():
         flash('Menu item added successfully!', 'success')
         return redirect(url_for('main.manage_menu'))
     
-    menu_items = MenuItem.query.filter_by(restaurant=current_user.restaurant).all()
-    return render_template('/owner/manage_menu.html', form=form, menu_items=menu_items)
+    menu_items = MenuItem.query.filter_by(restaurant=restaurant).all()
+    return render_template('/owner/manage_menu.html', form=form, menu_items=menu_items, restaurant=restaurant)
+
 
 @main.route('/owner/orders')
 @login_required
@@ -177,7 +183,7 @@ def view_orders():
     
     restaurant = current_user.restaurant
     orders = Order.query.filter_by(restaurant_id=restaurant.id).all()
-    return render_template('/owner/view_orders.html', orders=orders)
+    return render_template('/owner/view_orders.html', orders=orders, restaurant=restaurant)
 
 @main.route('/owner/orders/<int:order_id>/update', methods=['GET', 'POST'])
 @login_required
@@ -185,7 +191,7 @@ def update_order_status(order_id):
     if current_user.role != 'owner':
         flash('Access unauthorized!', 'danger')
         return redirect(url_for('main.home'))
-
+    restaurant = current_user.restaurant
     order = Order.query.get_or_404(order_id)
     form = OrderStatusForm()
     if form.validate_on_submit():
@@ -194,7 +200,7 @@ def update_order_status(order_id):
         flash('Order status updated!', 'success')
         return redirect(url_for('main.view_orders'))
     
-    return render_template('/owner/update_order_status.html', form=form, order=order)
+    return render_template('/owner/update_order_status.html', form=form, order=order, restaurant=restaurant)
 
 @main.route('/owner/profile', methods=['GET', 'POST'])
 @login_required
@@ -246,7 +252,7 @@ def edit_menu_item(menu_item_id):
     if current_user.role != 'owner':
         flash('Access unauthorized!', 'danger')
         return redirect(url_for('main.home'))
-
+    restaurant = current_user.restaurant
     menu_item = MenuItem.query.get_or_404(menu_item_id)
     form = EditMenuItemForm()
     if form.validate_on_submit():
@@ -269,7 +275,7 @@ def edit_menu_item(menu_item_id):
         form.price.data = menu_item.price
         form.category.data = menu_item.category
     
-    return render_template('/owner/edit_menu_item.html', form=form, menu_item=menu_item)
+    return render_template('/owner/edit_menu_item.html', form=form, menu_item=menu_item, restaurant=restaurant)
 
 @main.route('/owner/menu/<int:menu_item_id>/delete', methods=['POST'])
 @login_required
@@ -298,7 +304,7 @@ def sales_reports():
     total_sales = sum(order.total for order in orders)
     total_orders = len(orders)
     
-    return render_template('/owner/reports.html', total_sales=total_sales, total_orders=total_orders)
+    return render_template('/owner/reports.html', total_sales=total_sales, total_orders=total_orders, restaurant=restaurant)
 
 @main.route('/logout')
 @login_required
