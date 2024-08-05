@@ -36,7 +36,7 @@
                 </svg>
             </button>
         </div>
-        <a href="{{ url_for('main.home') }}" class="text-xl font-bold mx-auto lg:mx-0">
+        <a href="{{ url_for('main.owner_dashboard') }}" class="text-xl font-bold mx-auto lg:mx-0">
             {% if current_user.is_authenticated and current_user.role == 'owner' and restaurant %}
                 {{ restaurant.name }}
             {% else %}
@@ -46,16 +46,25 @@
         
         <div class="flex items-center lg:ml-auto">
             {% if current_user.is_authenticated and current_user.role == 'owner' and restaurant %}
+            <div class="hidden lg:flex space-x-4 nav-item">
+                <a href="{{ url_for('main.manage_menu') }}" class="text-xl font-bold">Menu</a>
+                <a href="{{ url_for('main.manage_menu') }}" class="text-xl font-bold">Menu</a>
+                <a href="{{ url_for('main.manage_menu') }}" class="text-xl font-bold">Menu</a>
+                <a href="{{ url_for('main.manage_menu') }}" class="text-xl font-bold">Menu</a>
+                
+
+            </div>
                 {% if restaurant.logo %}
                 <button id="avatar-button" class="focus:outline-none">
                     <img src="{{ url_for('static', filename='logos/' ~ restaurant.logo) }}" alt="User Avatar" class="w-8 h-8 rounded-full">
                 </button>
-                {% endif %}
+{% endif %}
                 
                 <ul id="avatar-menu" class="avatar-menu bg-white border border-gray-200 rounded-lg shadow-lg hidden">
                     <li><a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Profile</a></li>
                     <li><a href="{{ url_for('main.logout') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Logout</a></li>
                 </ul>
+                
             {% else %}
                 <div class="hidden lg:flex space-x-4 nav-item">
                     <a href="{{ url_for('main.login') }}" class="hover:underline">User Login</a>

@@ -11,7 +11,7 @@ base_dir = os.path.abspath(os.path.dirname(__file__))
 def create_app():
     app = Flask(__name__)
     app.config['SECRET_KEY'] = 'wewewacha'
-    app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{os.path.join(base_dir, "main.db")}'
+    app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{os.path.join(base_dir, "mainm.db")}'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['UPLOAD_FOLDER'] = 'static/menu_images'
     app.config['LOGO_UPLOAD_FOLDER'] = 'static/logos'

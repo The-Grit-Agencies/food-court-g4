@@ -1,10 +1,10 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request, current_app
+from flask import Blueprint, render_template, redirect, url_for, flash, request, abort, current_app
 from flask_login import login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 import os
 from . import db
-from .models import User, Restaurant, MenuItem, Order  
+from .models import User, Restaurant, MenuItem, Order, CartItem
 from .forms import RegistrationForm, LoginForm, OwnerRegistrationForm, AdminRegistrationForm, MenuItemForm, OrderStatusForm, RestaurantProfileForm, EditMenuItemForm # Add OrderStatusForm here
 
 
@@ -306,8 +306,120 @@ def sales_reports():
     
     return render_template('/owner/reports.html', total_sales=total_sales, total_orders=total_orders, restaurant=restaurant)
 
+
+
+
+
+@main.route('/user/cart/add/<int:menu_item_id>', methods=['POST'])
+@login_required
+def add_to_cart(menu_item_id):
+    
+    MenuItem.query.get_or_404(menu_item_id)
+    
+    quantity = request.form.get('quantity', type=int)
+
+    if quantity < 1:
+        flash('Invalid quantity!', 'danger')
+        return redirect(url_for(main.home))
+
+    cart_item = CartItem.query.filter_by(user_id=current_user.id, menu_item_id=menu_item_id).first()
+
+    if cart_item:
+        cart_item.quantity += quantity
+    else:
+        new_item = CartItem(user_id=current_user.id, menu_item_id=menu_item_id, quantity=quantity)
+        db.session.add(new_item)
+
+    db.session.commit()
+    flash('Item added to cart!', 'success')
+    return redirect(url_for('main.home'))
+
+
+@main.route('/user/cart')
+@login_required
+def view_cart():
+    cart_items = CartItem.query.filter_by(user_id=current_user.id).all()
+    total = sum(item.menu_item.price * item.quantity for item in cart_items)
+    return render_template('user/cart.html', cart_items=cart_items, total=total)
+
+
+@main.route('/user/cart/update/<int:cart_item_id>', methods=['POST'])
+@login_required
+def update_cart(cart_item_id):
+    cart_item = CartItem.query.get_or_404(cart_item_id)
+    if cart_item.user_id != current_user.id:
+        abort(403)
+
+    quantity = request.form.get('quantity', type=int)
+
+    if quantity < 1:
+            flash('wah wah wah zii', 'danger')
+            return redirect(url_for('main.view_cart'))
+        
+    cart_item.quantity = quantity
+    db.session.commit()
+    flash('Cart Updated!', 'success')
+    return redirect(url_for('main.view_cart'))
+
+@main.route('/user/cart/remove/<int:cart_item_id>', methods=['POST'])
+@login_required
+def remove_from_cart(cart_item_id):
+    cart_item =CartItem.query.get_or_404(cart_item_id)
+    if cart_item.user_id != current_user.id:
+        abort(403)
+
+    db.session.delete(cart_item)
+    db.session.commit()
+    flash('item removed nicely', 'success')
+    return redirect(url_for('main.view_cart'))
+
+
+
+@main.route('/user/checkout', methods=['GET', 'POST'])
+@login_required
+def checkout():
+    if request.method == 'POST':
+        
+
+        cart_items = CartItem.query.filter_by(user_id=current_user.id).all()
+        if not cart_items:
+            flash('Your cart is empty!', 'danger')
+            return redirect(url_for('main.view_cart'))
+
+        order = Order(
+            customer_id=current_user.id,
+            restaurant_id=cart_items[0].menu_item.restaurant_id,
+            status='Paid',
+            total=sum(item.menu_item.price * item.quantity for item in cart_items)
+        )
+        db.session.add(order)
+        db.session.commit()
+
+        for item in cart_items:
+            db.session.delete(item)
+
+        db.session.commit()
+
+        flash('Order placed successfully!', 'success')
+        return redirect(url_for('main.order_success'))
+
+    return render_template('user/checkout.html')
+
+@main.route('/user/order/success')
+@login_required
+def order_success():
+    return render_template('user/order_success.html')
+
+@main.route('/user/order/history')
+@login_required
+def order_history():
+    orders = Order.query.filter_by(customer_id=current_user.id).all()
+    return render_template('user/order_history.html', orders=orders)
+
+
+
 @main.route('/logout')
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for('main.login'))
+    return redirect(url_for('main.home'))

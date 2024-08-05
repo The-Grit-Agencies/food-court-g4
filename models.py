@@ -40,3 +40,11 @@ class Order(db.Model):
     restaurant = db.relationship('Restaurant', backref=db.backref('orders', lazy=True))
     customer_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     customer = db.relationship('User', backref=db.backref('orders', lazy=True))
+
+class CartItem(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    menu_item_id = db.Column(db.Integer, db.ForeignKey('menu_item.id'), nullable=False)
+    quantity = db.Column(db.Integer, nullable=False, default=1)
+    user = db.relationship('User', backref=db.backref('cart_items', lazy=True))
+    menu_item = db.relationship('MenuItem', backref=db.backref('cart_items', lazy=True))
