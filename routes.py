@@ -4,7 +4,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 import os
 from . import db
-from .models import User, Restaurant, MenuItem, Order  # Add Order here
+from .models import User, Restaurant, MenuItem, Order  
 from .forms import RegistrationForm, LoginForm, OwnerRegistrationForm, AdminRegistrationForm, MenuItemForm, OrderStatusForm, RestaurantProfileForm, EditMenuItemForm # Add OrderStatusForm here
 
 
@@ -13,9 +13,10 @@ main = Blueprint('main', __name__)
 
 @main.route('/')
 def home():
-    menu_items = MenuItem.query.all()  # Fetch all menu items
-    restaurants = Restaurant.query.all()  # Fetch all restaurants
-    return render_template('home.html', menu_items=menu_items, restaurants=restaurants)
+    menu_items = MenuItem.query.all()  
+    restaurants = Restaurant.query.all()  
+    restaurant = current_user.restaurant
+    return render_template('home.html', menu_items=menu_items, restaurants=restaurants, restaurant=restaurant)
 
 
 @main.route('/user/register', methods=['GET', 'POST'])

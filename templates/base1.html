@@ -45,7 +45,7 @@
         </a>
         
         <div class="flex items-center lg:ml-auto">
-            {% if current_user.is_authenticated %}
+            {% if current_user.is_authenticated and current_user.role == 'owner' %}
             {% if restaurant.logo %}
             <button id="avatar-button" class="focus:outline-none">
                 <img src="{{ url_for('static', filename='logos/' ~ restaurant.logo) }}" alt="User Avatar" class="w-8 h-8 rounded-full">
