@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Grit Dine{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 10;
+            padding: 0.75rem 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .nav-item {
+            margin-left: 1rem;
+        }
+        .avatar-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 0.5rem;
+            min-width: 150px;
+        }
+        .cart-icon {
+            position: relative;
+        }
+        .cart-badge {
+            position: absolute;
+            top: -0.5rem;
+            right: -0.5rem;
+            width: 1.5rem;
+            height: 1.5rem;
+            background-color: green;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: bold;
+            animation: bounce 0.5s infinite;
+        }
+        .cart-badge.red {
+            background-color: red;
+        }
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    
+    <nav class="bg-red-500 header text-white flex justify-between items-center rounded-lg mx-4 mt-4">
+       
+        <div class="lg:hidden">
+            <button id="hamburger" class="text-white focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                </svg>
+            </button>
+        </div>
+
+       
+        <a href="{{ url_for('main.home') }}" class="text-xl font-bold mx-auto lg:mx-0">Grit Dine</a>
+
+        
+        <div class="flex items-center lg:ml-auto">
+            {% if current_user.is_authenticated %}
+                <div class="cart-icon mr-4">
+                    <a href="{{ url_for('main.view_cart') }}" class="text-2xl">🛒</a>
+                    {% if cart_count > 0 %}
+                        <div class="cart-badge {% if cart_count > 0 %}red{% else %}green{% endif %}">
+                            {{ cart_count }}
+                        </div>
+                    {% endif %}
+                </div>
+                <button id="avatar-button" class="focus:outline-none">
+                    <img src="https://img.freepik.com/free-photo/androgynous-avatar-non-binary-queer-person_23-2151100278.jpg?t=st=1722710635~exp=1722714235~hmac=0ead666d88e524a63aa04c796115961525fe927f68ab3b3d0b79b7811931ca8f&w=740" alt="User Avatar" class="w-8 h-8 rounded-full">
+                </button>
+                <ul id="avatar-menu" class="avatar-menu bg-white border border-gray-200 rounded-lg shadow-lg hidden">
+                    <li><a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Profile</a></li>
+                    <li><a href="{{ url_for('main.logout') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Logout</a></li>
+                </ul>
+            {% else %}
+                <div class="hidden lg:flex space-x-4 nav-item">
+                    <a href="{{ url_for('main.login') }}" class="hover:underline">User Login</a>
+                    <a href="{{ url_for('main.login_owner') }}" class="hover:underline">Owner Login</a>
+                    <a href="{{ url_for('main.login_admin') }}" class="hover:underline">Admin Login</a>
+                    <a href="{{ url_for('main.register') }}" class="hover:underline">Register</a>
+                    <a href="{{ url_for('main.register_owner') }}" class="hover:underline">Own Register</a>
+                    <a href="{{ url_for('main.register_admin') }}" class="hover:underline">Ad Register</a>
+                </div>
+            {% endif %}
+        </div>
+    </nav>
+
+    
+    <div id="mobile-menu" class="fixed lg:hidden inset-0 bg-red-500 text-white flex justify-center items-center z-50 hidden">
+        <div class="text-center">
+            <button id="close-menu" class="absolute top-4 right-4 text-white focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+            <ul class="space-y-4">
+                <li><a href="{{ url_for('main.home') }}" class="text-xl font-bold">Home</a></li>
+                {% if current_user.is_authenticated %}
+                    <li><a href="{{ url_for('main.logout') }}">Logout</a></li>
+                {% else %}
+                    <li><a href="{{ url_for('main.login') }}">User Login</a></li>
+                    <li><a href="{{ url_for('main.login_owner') }}">Owner Login</a></li>
+                    <li><a href="{{ url_for('main.login_admin') }}">Admin Login</a></li>
+                    <li><a href="{{ url_for('main.register') }}">Register</a></li>
+                    <li><a href="{{ url_for('main.register_owner') }}">Own Register</a></li>
+                    <li><a href="{{ url_for('main.register_admin') }}">Ad Register</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+
+    
+    <div class="container mx-auto p-4 mt-16">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    
+    <nav class="fixed inset-x-0 bottom-0 bg-red-500 p-4 text-white lg:hidden flex justify-around items-center rounded-lg mx-4 mb-4">
+        <a href="{{ url_for('main.home') }}" class="text-2xl">🏠</a>
+        <a href="#" class="text-2xl">🔍</a>
+        <a href="#" class="text-2xl">📱</a>
+        <a href="#" class="text-2xl">🛒</a>
+    </nav>
+
+    <script>
+        
+        const hamburger = document.getElementById('hamburger');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const closeMenu = document.getElementById('close-menu');
+
+        hamburger.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        closeMenu.addEventListener('click', () => {
+            mobileMenu.classList.add('hidden');
+        });
+
+        
+        const avatarButton = document.getElementById('avatar-button');
+        const avatarMenu = document.getElementById('avatar-menu');
+
+        avatarButton.addEventListener('click', () => {
+            avatarMenu.classList.toggle('hidden');
+        });
+
+        
+        document.addEventListener('click', (event) => {
+            if (!avatarButton.contains(event.target) && !avatarMenu.contains(event.target)) {
+                avatarMenu.classList.add('hidden');
+            }
+        });
+    </script>
+
+    <script>
+        
+        setTimeout(() => {
+            const flashMessages = document.getElementById('flash-messages');
+            if (flashMessages) {
+                flashMessages.remove();
+            }
+        }, 3000); 
+    </script>
+</body>
+</html>

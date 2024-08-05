@@ -1,0 +1,39 @@
+{% extends "base1.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<div class="bg-white p-8 border border-gray-300 rounded-lg shadow-lg">
+    <h1 class="text-4xl font-bold mb-4">Welcome to Grit Dine</h1>
+    <p class="text-gray-700 mb-4">Hey Stranger</p>
+    <div class="flex space-x-4 mb-4">
+        <a href="{{ url_for('main.register') }}" class="w-full md:w-auto p-2 bg-blue-500 text-white rounded-lg">Register</a>
+        <a href="{{ url_for('main.login') }}" class="w-full md:w-auto p-2 bg-gray-500 text-white rounded-lg">Login</a>
+    </div>
+
+    <h2 class="text-2xl font-semibold mb-4">Menu</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        {% for item in menu_items %}
+            <div class="bg-gray-100 p-4 border border-gray-300 rounded-lg shadow-md">
+                <h3 class="text-xl font-bold mb-2">{{ item.name }}</h3>
+                <p class="text-gray-600 mb-2">{{ item.description }}</p>
+                <p class="text-lg font-semibold mb-2">${{ item.price }}</p>
+                <img src="{{ url_for('static', filename='menu_images/' ~ item.image_file) }}" alt="{{ item.name }}" class="w-full h-auto rounded-lg">
+            </div>
+        {% endfor %}
+    </div>
+
+    <h2 class="text-2xl font-semibold mb-4">Restaurants</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for restaurant in restaurants %}
+            <div class="bg-gray-100 p-4 border border-gray-300 rounded-lg shadow-md">
+                <h3 class="text-xl font-bold mb-2">{{ restaurant.name }}</h3>
+                <p class="text-gray-600 mb-2">Contact: {{ restaurant.contact }}</p>
+                <p class="text-gray-600 mb-2">Address: {{ restaurant.address }}</p>
+                <p class="text-gray-600 mb-2">Opening Hours: {{ restaurant.opening_hours }}</p>
+                {% if restaurant.logo %}
+                <img src="{{ url_for('static', filename='logos/' ~ restaurant.logo) }}" alt="{{ restaurant.name }}" class="w-full h-auto rounded-lg">
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

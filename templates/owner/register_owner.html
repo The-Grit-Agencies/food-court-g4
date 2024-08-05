@@ -1,0 +1,41 @@
+{% extends "base1.html" %}
+
+{% block title %}Register Owner{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-center min-h-screen bg-gray-100">
+    <div class="w-full max-w-md p-8 bg-white shadow-lg rounded-lg">
+        <h2 class="text-2xl font-bold mb-4">Register as Owner</h2>
+        <form method="POST" action="{{ url_for('main.register_owner') }}" class="space-y-4">
+            {{ form.hidden_tag() }}
+            <div>
+                {{ form.username.label(class="block mb-1") }} 
+                {{ form.username(class="w-full p-2 border border-gray-300 rounded") }}
+            </div>
+            <div>
+                {{ form.email.label(class="block mb-1") }} 
+                {{ form.email(class="w-full p-2 border border-gray-300 rounded") }}
+            </div>
+            <div>
+                {{ form.password.label(class="block mb-1") }} 
+                {{ form.password(class="w-full p-2 border border-gray-300 rounded") }}
+            </div>
+            <div>
+                {{ form.confirm_password.label(class="block mb-1") }} 
+                {{ form.confirm_password(class="w-full p-2 border border-gray-300 rounded") }}
+            </div>
+            <div>
+                {{ form.restaurant_name.label(class="block mb-1") }} 
+                {{ form.restaurant_name(class="w-full p-2 border border-gray-300 rounded") }}
+            </div>
+            <div>
+                {{ form.restaurant_contact.label(class="block mb-1") }} 
+                {{ form.restaurant_contact(class="w-full p-2 border border-gray-300 rounded") }}
+            </div>
+            <div>
+                {{ form.submit(class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600") }}
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
