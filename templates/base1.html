@@ -37,20 +37,21 @@
             </button>
         </div>
         <a href="{{ url_for('main.home') }}" class="text-xl font-bold mx-auto lg:mx-0">
-            {% if current_user.is_authenticated and current_user.role == 'owner' %}
-                {{ current_user.restaurant.name }}
+            {% if current_user.is_authenticated and current_user.role == 'owner' and restaurant %}
+                {{ restaurant.name }}
             {% else %}
                 Grit 
             {% endif %}
         </a>
         
         <div class="flex items-center lg:ml-auto">
-             {% if current_user.is_authenticated and current_user.role == 'owner' %}
-            {% if restaurant.logo %}
-            <button id="avatar-button" class="focus:outline-none">
-                <img src="{{ url_for('static', filename='logos/' ~ restaurant.logo) }}" alt="User Avatar" class="w-8 h-8 rounded-full">
-            </button>  {% endif %}
-               
+            {% if current_user.is_authenticated and current_user.role == 'owner' and restaurant %}
+                {% if restaurant.logo %}
+                <button id="avatar-button" class="focus:outline-none">
+                    <img src="{{ url_for('static', filename='logos/' ~ restaurant.logo) }}" alt="User Avatar" class="w-8 h-8 rounded-full">
+                </button>
+                {% endif %}
+                
                 <ul id="avatar-menu" class="avatar-menu bg-white border border-gray-200 rounded-lg shadow-lg hidden">
                     <li><a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Profile</a></li>
                     <li><a href="{{ url_for('main.logout') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Logout</a></li>
@@ -78,25 +79,24 @@
                 <li><a href="{{ url_for('main.home') }}" class="text-xl font-bold">Home</a></li>
                 
                 {% if current_user.is_authenticated %}
-                  
-                {% if current_user.role == 'owner' %}
-                    <li><a href="{{ url_for('main.manage_menu') }}" class="text-xl font-bold">Menu</a></li>
-                    <li><a href="{{ url_for('main.sales_reports') }}" class="text-xl font-bold">Reports</a></li>
-                    <li><a href="{{ url_for('main.view_orders') }}" class="text-xl font-bold">Orders</a></li>
-                    <li><a href="{{ url_for('main.owner_profile') }}" class="text-xl font-bold">Profilezz</a></li>
-                {% elif current_user.role == 'admin' %}
-                    <li><a href="{{ url_for('main.admin_dashboard') }}" class="text-xl font-bold">Admin Dashboard</a></li>
-                {% endif %}
-                <li><a href="{{ url_for('main.logout') }}">Logout</a></li>
-            {% else %}
-                
-                 <li><a href="{{ url_for('main.login') }}">User Login</a></li>
+                    
+                    {% if current_user.role == 'owner' %}
+                        <li><a href="{{ url_for('main.manage_menu') }}" class="text-xl font-bold">Menu</a></li>
+                        <li><a href="{{ url_for('main.sales_reports') }}" class="text-xl font-bold">Reports</a></li>
+                        <li><a href="{{ url_for('main.view_orders') }}" class="text-xl font-bold">Orders</a></li>
+                        <li><a href="{{ url_for('main.owner_profile') }}" class="text-xl font-bold">Profile</a></li>
+                    {% elif current_user.role == 'admin' %}
+                        <li><a href="{{ url_for('main.admin_dashboard') }}" class="text-xl font-bold">Admin Dashboard</a></li>
+                    {% endif %}
+                    <li><a href="{{ url_for('main.logout') }}">Logout</a></li>
+                {% else %}
+                    <li><a href="{{ url_for('main.login') }}">User Login</a></li>
                     <li><a href="{{ url_for('main.login_owner') }}">Owner Login</a></li>
                     <li><a href="{{ url_for('main.login_admin') }}">Admin Login</a></li>
                     <li><a href="{{ url_for('main.register') }}">Register</a></li>
                     <li><a href="{{ url_for('main.register_owner') }}">Own Register</a></li>
                     <li><a href="{{ url_for('main.register_admin') }}">Ad Register</a></li>
-            {% endif %}
+                {% endif %}
             </ul>
         </div>
     </div>
@@ -106,7 +106,6 @@
     </div>
     <nav class="fixed inset-x-0 bottom-0 bg-blue-500 p-4 text-white lg:hidden flex justify-around items-center rounded-lg mx-4 mb-4">
         <a href="{{ url_for('main.home') }}" class="text-2xl">🏠</a>
-        
     </nav>
     <script>
         const hamburger = document.getElementById('hamburger');
