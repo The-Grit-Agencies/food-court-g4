@@ -5,8 +5,8 @@ from werkzeug.utils import secure_filename
 import os
 from . import db
 from .models import User, Restaurant, MenuItem, Order, CartItem
-from .forms import RegistrationForm, LoginForm, OwnerRegistrationForm, AdminRegistrationForm, MenuItemForm, OrderStatusForm, RestaurantProfileForm, EditMenuItemForm # Add OrderStatusForm here
-
+from .forms import RegistrationForm, LoginForm, UserProfileForm, OwnerRegistrationForm, AdminRegistrationForm, MenuItemForm, OrderStatusForm, RestaurantProfileForm, EditMenuItemForm # Add OrderStatusForm here
+from sqlalchemy import func
 
 
 main = Blueprint('main', __name__)
@@ -389,7 +389,7 @@ def checkout():
         order = Order(
             customer_id=current_user.id,
             restaurant_id=cart_items[0].menu_item.restaurant_id,
-            status='Paid',
+            status='Processing',
             total=sum(item.menu_item.price * item.quantity for item in cart_items)
         )
         db.session.add(order)
@@ -417,6 +417,84 @@ def order_history():
     return render_template('user/order_history.html', orders=orders)
 
 
+@main.route('/user/profile', methods=['GET', 'POST'])
+@login_required
+def user_profile():
+    form = UserProfileForm()
+    if form.validate_on_submit():
+        if form.profile_picture.data:
+            picture_file = secure_filename(form.profile_picture.data.filename)
+            picture_path = os.path.join(current_app.config['PIC_UPLOAD_FOLDER'], picture_file)
+            form.profile_picture.data.save(picture_path)
+            current_user.profile_picture = picture_file
+
+        current_user.username = form.username.data
+        current_user.email = form.email.data
+        if form.password.data:
+            current_user.password = generate_password_hash(form.password.data, method='pbkdf2:sha256')
+        
+        db.session.commit()
+        flash('Your profile has been updated!', 'success')
+        return redirect(url_for('main.user_profile'))
+
+    elif request.method == 'GET':
+        form.username.data = current_user.username
+        form.email.data = current_user.email
+        
+    
+    return render_template('user/profile.html', form=form)
+
+@main.route('/owner/analytics')
+@login_required
+def owner_analytics():
+    if current_user.role != 'owner':
+        return redirect(url_for('index'))
+
+    # Sales Trends: Orders grouped by day (or week/month)
+    sales_trends = db.session.query(
+        func.date(Order.date_created).label('date'),
+        func.sum(Order.total).label('total_sales')
+    ).filter_by(restaurant_id=current_user.restaurant.id).group_by('date').all()
+
+    # Popular Items: Menu items ordered the most
+    popular_items = db.session.query(
+        MenuItem.name,
+        func.count(Order.id).label('order_count')
+    ).join(Order, Order.restaurant_id == current_user.restaurant.id
+    ).group_by(MenuItem.name).order_by(func.count(Order.id).desc()).all()
+
+    # Peak Ordering Times: Most orders placed at which time of the day
+    peak_ordering_times = db.session.query(
+        func.strftime('%H', Order.date_created).label('hour'),
+        func.count(Order.id).label('order_count')
+    ).filter_by(restaurant_id=current_user.restaurant.id).group_by('hour').order_by('hour').all()
+
+    # Customer Insights
+    frequent_customers = db.session.query(
+        User.username,
+        func.count(Order.id).label('order_count')
+    ).join(Order, Order.customer_id == User.id
+    ).filter(Order.restaurant_id == current_user.restaurant.id
+    ).group_by(User.username).order_by(func.count(Order.id).desc()).all()
+
+    avg_order_value = db.session.query(
+        func.avg(Order.total).label('avg_order_value')
+    ).filter_by(restaurant_id=current_user.restaurant.id).scalar()
+
+    repeat_orders = db.session.query(
+        User.username,
+        func.count(Order.id).label('order_count')
+    ).join(Order, Order.customer_id == User.id
+    ).filter(Order.restaurant_id == current_user.restaurant.id
+    ).group_by(User.username).having(func.count(Order.id) > 1).order_by(func.count(Order.id).desc()).all()
+
+    return render_template('owner/analytics.html', 
+                           sales_trends=sales_trends, 
+                           popular_items=popular_items, 
+                           peak_ordering_times=peak_ordering_times,
+                           frequent_customers=frequent_customers,
+                           avg_order_value=avg_order_value,
+                           repeat_orders=repeat_orders)
 
 @main.route('/logout')
 @login_required

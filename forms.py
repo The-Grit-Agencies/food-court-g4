@@ -96,3 +96,13 @@ class EditMenuItemForm(FlaskForm):
     category = StringField('Category', validators=[DataRequired(), Length(min=1, max=50)])
     image = FileField('Image', validators=[FileAllowed(['jpg', 'png'])])
     submit = SubmitField('Update Menu Item')
+
+class UserProfileForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired(), Length(min=3, max=12)])
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    password = PasswordField('New Password', validators=[Length(min=6)])
+    confirm_password = PasswordField('Confirm New Password', validators=[EqualTo('password')])
+    profile_picture = FileField('Update Profile Picture', validators=[FileAllowed(['jpg', 'png'])])
+    submit = SubmitField('Update Profile')
+
+

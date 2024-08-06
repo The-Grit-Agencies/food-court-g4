@@ -90,11 +90,15 @@
             </a>
             <!-- Avatar Button -->
             <button id="avatar-button" class="focus:outline-none ml-4">
-                <img src="https://img.freepik.com/free-photo/androgynous-avatar-non-binary-queer-person_23-2151100278.jpg?t=st=1722710635~exp=1722714235~hmac=0ead666d88e524a63aa04c796115961525fe927f68ab3b3d0b79b7811931ca8f&w=740" alt="User Avatar" class="w-8 h-8 rounded-full">
+                <img 
+                    src="{% if current_user.profile_picture %}{{ url_for('static', filename='profile_pics/' ~ current_user.profile_picture) }}{% else %}https://img.freepik.com/free-photo/androgynous-avatar-non-binary-queer-person_23-2151100278.jpg?t=st=1722710635~exp=1722714235~hmac=0ead666d88e524a63aa04c796115961525fe927f68ab3b3d0b79b7811931ca8f&w=740{% endif %}" 
+                    alt="User Avatar" 
+                    class="w-8 h-8 rounded-full">
             </button>
+            
             <!-- Avatar Menu -->
             <ul id="avatar-menu" class="avatar-menu bg-white border border-gray-200 rounded-lg shadow-lg hidden">
-                <li><a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Profile</a></li>
+                <li><a href="{{ url_for('main.user_profile') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Profile</a></li>
                 <li><a href="{{ url_for('main.logout') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Logout</a></li>
             </ul>
         </div>
@@ -121,7 +125,6 @@
             <ul class="space-y-4">
                 <li><a href="{{ url_for('main.home') }}" class="text-xl font-bold">Home</a></li>
                 {% if current_user.is_authenticated %}
-                <li><a href="{{ url_for('main.logout') }}">Logout</a></li>
                 <li><a href="{{ url_for('main.order_history') }}">Orders</a></li>
                 <li><a href="{{ url_for('main.logout') }}">Logout</a></li>
                     

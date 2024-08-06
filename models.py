@@ -9,6 +9,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(60), nullable=False)
     role = db.Column(db.String(10), nullable=False, default='user')
+    profile_picture = db.Column(db.String(20), nullable=True, default='default.jpg')
 
 class Restaurant(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -20,11 +21,10 @@ class Restaurant(db.Model):
     owner_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     owner = db.relationship('User', backref=db.backref('restaurant', uselist=False))
 
-
 class MenuItem(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    description = db.Column(db.Text, nullable=True)
+    name = db.Column(db.String(120), nullable=False)
+    description = db.Column(db.String(250), nullable=True)
     price = db.Column(db.Float, nullable=False)
     category = db.Column(db.String(50), nullable=False)
     image_file = db.Column(db.String(20), nullable=False, default='default.jpg')
@@ -33,13 +33,13 @@ class MenuItem(db.Model):
 
 class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    date_ordered = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    customer_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    restaurant_id = db.Column(db.Integer, db.ForeignKey('restaurant.id'), nullable=False)
     status = db.Column(db.String(20), nullable=False, default='Pending')
     total = db.Column(db.Float, nullable=False)
-    restaurant_id = db.Column(db.Integer, db.ForeignKey('restaurant.id'), nullable=False)
-    restaurant = db.relationship('Restaurant', backref=db.backref('orders', lazy=True))
-    customer_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    date_created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     customer = db.relationship('User', backref=db.backref('orders', lazy=True))
+    restaurant = db.relationship('Restaurant', backref=db.backref('orders', lazy=True))
 
 class CartItem(db.Model):
     id = db.Column(db.Integer, primary_key=True)
