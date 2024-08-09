@@ -495,6 +495,23 @@ def owner_analytics():
                            frequent_customers=frequent_customers,
                            avg_order_value=avg_order_value,
                            repeat_orders=repeat_orders)
+@main.route('/user/menu')
+def menu():
+    # Fetch menu items from the database
+    menu_items = MenuItem.query.all()
+    return render_template('menu.html', menu_items=menu_items)
+
+@main.route('/search')
+def search():
+    query = request.args.get('q')
+    if query:
+        restaurants = Restaurant.query.filter(Restaurant.name.ilike(f'%{query}%')).all()
+        menu_items = MenuItem.query.filter(MenuItem.name.ilike(f'%{query}%')).all()
+    else:
+        restaurants = []
+        menu_items = []
+
+    return render_template('searchbar.html', query=query, restaurants=restaurants, menu_items=menu_items)    
 
 @main.route('/logout')
 @login_required
