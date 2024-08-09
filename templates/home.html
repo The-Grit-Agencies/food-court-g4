@@ -132,11 +132,17 @@
         <h1>Welcome to The Food-Court</h1>
     </div>
 
-    <div class="text-center mb-4">
+    <!-- <div class="text-center mb-4">
         <a href="{{ url_for('main.register') }}" class="btn btn-custom">Register</a>
         <a href="{{ url_for('main.login') }}" class="btn btn-custom-secondary">Login</a>
-    </div>
-
+    </div> -->
+<!-- search bar -->
+<div class="mt-6 mx-4">
+    <form action="{{url_for('main.search')}}" method="GET" class="flex items-center">
+        <input type="text" name="q" placeholder="Search..." class="flex-grow p-2 border-gray-300 rounded-l-lg">
+        <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-r-lg">Search</button>
+    </form>
+ </div>
     <h2 class="section-heading">Menu</h2>
     <div class="row">
         {% for item in menu_items %}
