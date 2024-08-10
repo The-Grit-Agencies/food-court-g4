@@ -28,7 +28,7 @@ def home():
 def register():
     form = RegistrationForm()
     if form.validate_on_submit():
-        hashed_password = generate_password_hash(form.password.data, method='sha256')
+        hashed_password = generate_password_hash(form.password.data, method='pbkdf2:sha256')
         user = User(username=form.username.data, email=form.email.data, password=hashed_password)
         db.session.add(user)
         db.session.commit()
@@ -58,7 +58,7 @@ def dashboard():
 def register_owner():
     form = OwnerRegistrationForm()
     if form.validate_on_submit():
-        hashed_password = generate_password_hash(form.password.data, method='sha256')
+        hashed_password = generate_password_hash(form.password.data, method='pbkdf2:sha256')
         user = User(username=form.username.data,
                     email=form.email.data,
                     password=hashed_password,
@@ -93,7 +93,7 @@ def login_owner():
 def register_admin():
     form = AdminRegistrationForm()
     if form.validate_on_submit():
-        hashed_password = generate_password_hash(form.password.data, method='sha256')
+        hashed_password = generate_password_hash(form.password.data, method='pbkdf2:sha256')
         user = User(username=form.username.data, email=form.email.data, password=hashed_password, role='admin')
         db.session.add(user)
         db.session.commit()
