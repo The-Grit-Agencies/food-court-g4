@@ -9,6 +9,7 @@ defer==1.0.4
 distlib==0.3.8
 distro==1.7.0
 distro-info==1.0
+DistUtilsExtra==2.39
 dnspython==2.6.1
 duplicity==0.8.20
 email_validator==2.2.0
