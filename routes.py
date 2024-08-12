@@ -1,12 +1,12 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request, current_app
+from flask import Blueprint, render_template, redirect, url_for, flash, request, abort, current_app
 from flask_login import login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 import os
 from . import db
-from .models import User, Restaurant, MenuItem, Order  
-from .forms import RegistrationForm, LoginForm, OwnerRegistrationForm, AdminRegistrationForm, MenuItemForm, OrderStatusForm, RestaurantProfileForm, EditMenuItemForm # Add OrderStatusForm here
-
+from .models import User, Restaurant, MenuItem, Order, CartItem
+from .forms import RegistrationForm, LoginForm, UserProfileForm, OwnerRegistrationForm, AdminRegistrationForm, MenuItemForm, OrderStatusForm, RestaurantProfileForm, EditMenuItemForm # Add OrderStatusForm here
+from sqlalchemy import func
 
 
 main = Blueprint('main', __name__)
@@ -306,8 +306,215 @@ def sales_reports():
     
     return render_template('/owner/reports.html', total_sales=total_sales, total_orders=total_orders, restaurant=restaurant)
 
+
+
+
+
+@main.route('/user/cart/add/<int:menu_item_id>', methods=['POST'])
+@login_required
+def add_to_cart(menu_item_id):
+    
+    MenuItem.query.get_or_404(menu_item_id)
+    
+    quantity = request.form.get('quantity', type=int)
+
+    if quantity < 1:
+        flash('Invalid quantity!', 'danger')
+        return redirect(url_for(main.home))
+
+    cart_item = CartItem.query.filter_by(user_id=current_user.id, menu_item_id=menu_item_id).first()
+
+    if cart_item:
+        cart_item.quantity += quantity
+    else:
+        new_item = CartItem(user_id=current_user.id, menu_item_id=menu_item_id, quantity=quantity)
+        db.session.add(new_item)
+
+    db.session.commit()
+    flash('Item added to cart!', 'success')
+    return redirect(url_for('main.home'))
+
+
+@main.route('/user/cart')
+@login_required
+def view_cart():
+    cart_items = CartItem.query.filter_by(user_id=current_user.id).all()
+    total = sum(item.menu_item.price * item.quantity for item in cart_items)
+    return render_template('user/cart.html', cart_items=cart_items, total=total)
+
+
+@main.route('/user/cart/update/<int:cart_item_id>', methods=['POST'])
+@login_required
+def update_cart(cart_item_id):
+    cart_item = CartItem.query.get_or_404(cart_item_id)
+    if cart_item.user_id != current_user.id:
+        abort(403)
+
+    quantity = request.form.get('quantity', type=int)
+
+    if quantity < 1:
+            flash('wah wah wah zii', 'danger')
+            return redirect(url_for('main.view_cart'))
+        
+    cart_item.quantity = quantity
+    db.session.commit()
+    flash('Cart Updated!', 'success')
+    return redirect(url_for('main.view_cart'))
+
+@main.route('/user/cart/remove/<int:cart_item_id>', methods=['POST'])
+@login_required
+def remove_from_cart(cart_item_id):
+    cart_item =CartItem.query.get_or_404(cart_item_id)
+    if cart_item.user_id != current_user.id:
+        abort(403)
+
+    db.session.delete(cart_item)
+    db.session.commit()
+    flash('item removed nicely', 'success')
+    return redirect(url_for('main.view_cart'))
+
+
+
+@main.route('/user/checkout', methods=['GET', 'POST'])
+@login_required
+def checkout():
+    if request.method == 'POST':
+        
+
+        cart_items = CartItem.query.filter_by(user_id=current_user.id).all()
+        if not cart_items:
+            flash('Your cart is empty!', 'danger')
+            return redirect(url_for('main.view_cart'))
+
+        order = Order(
+            customer_id=current_user.id,
+            restaurant_id=cart_items[0].menu_item.restaurant_id,
+            status='Processing',
+            total=sum(item.menu_item.price * item.quantity for item in cart_items)
+        )
+        db.session.add(order)
+        db.session.commit()
+
+        for item in cart_items:
+            db.session.delete(item)
+
+        db.session.commit()
+
+        flash('Order placed successfully!', 'success')
+        return redirect(url_for('main.order_success'))
+
+    return render_template('user/checkout.html')
+
+@main.route('/user/order/success')
+@login_required
+def order_success():
+    return render_template('user/order_success.html')
+
+@main.route('/user/order/history')
+@login_required
+def order_history():
+    orders = Order.query.filter_by(customer_id=current_user.id).all()
+    return render_template('user/order_history.html', orders=orders)
+
+
+@main.route('/user/profile', methods=['GET', 'POST'])
+@login_required
+def user_profile():
+    form = UserProfileForm()
+    if form.validate_on_submit():
+        if form.profile_picture.data:
+            picture_file = secure_filename(form.profile_picture.data.filename)
+            picture_path = os.path.join(current_app.config['PIC_UPLOAD_FOLDER'], picture_file)
+            form.profile_picture.data.save(picture_path)
+            current_user.profile_picture = picture_file
+
+        current_user.username = form.username.data
+        current_user.email = form.email.data
+        if form.password.data:
+            current_user.password = generate_password_hash(form.password.data, method='pbkdf2:sha256')
+        
+        db.session.commit()
+        flash('Your profile has been updated!', 'success')
+        return redirect(url_for('main.user_profile'))
+
+    elif request.method == 'GET':
+        form.username.data = current_user.username
+        form.email.data = current_user.email
+        
+    
+    return render_template('user/profile.html', form=form)
+
+@main.route('/owner/analytics')
+@login_required
+def owner_analytics():
+    if current_user.role != 'owner':
+        return redirect(url_for('index'))
+
+    # Sales Trends: Orders grouped by day (or week/month)
+    sales_trends = db.session.query(
+        func.date(Order.date_created).label('date'),
+        func.sum(Order.total).label('total_sales')
+    ).filter_by(restaurant_id=current_user.restaurant.id).group_by('date').all()
+
+    # Popular Items: Menu items ordered the most
+    popular_items = db.session.query(
+        MenuItem.name,
+        func.count(Order.id).label('order_count')
+    ).join(Order, Order.restaurant_id == current_user.restaurant.id
+    ).group_by(MenuItem.name).order_by(func.count(Order.id).desc()).all()
+
+    # Peak Ordering Times: Most orders placed at which time of the day
+    peak_ordering_times = db.session.query(
+        func.strftime('%H', Order.date_created).label('hour'),
+        func.count(Order.id).label('order_count')
+    ).filter_by(restaurant_id=current_user.restaurant.id).group_by('hour').order_by('hour').all()
+
+    # Customer Insights
+    frequent_customers = db.session.query(
+        User.username,
+        func.count(Order.id).label('order_count')
+    ).join(Order, Order.customer_id == User.id
+    ).filter(Order.restaurant_id == current_user.restaurant.id
+    ).group_by(User.username).order_by(func.count(Order.id).desc()).all()
+
+    avg_order_value = db.session.query(
+        func.avg(Order.total).label('avg_order_value')
+    ).filter_by(restaurant_id=current_user.restaurant.id).scalar()
+
+    repeat_orders = db.session.query(
+        User.username,
+        func.count(Order.id).label('order_count')
+    ).join(Order, Order.customer_id == User.id
+    ).filter(Order.restaurant_id == current_user.restaurant.id
+    ).group_by(User.username).having(func.count(Order.id) > 1).order_by(func.count(Order.id).desc()).all()
+
+    return render_template('owner/analytics.html', 
+                           sales_trends=sales_trends, 
+                           popular_items=popular_items, 
+                           peak_ordering_times=peak_ordering_times,
+                           frequent_customers=frequent_customers,
+                           avg_order_value=avg_order_value,
+                           repeat_orders=repeat_orders)
+@main.route('/user/menu')
+def menu():
+    # Fetch menu items from the database
+    menu_items = MenuItem.query.all()
+    return render_template('menu.html', menu_items=menu_items)
+
+@main.route('/search')
+def search():
+    query = request.args.get('q')
+    if query:
+        restaurants = Restaurant.query.filter(Restaurant.name.ilike(f'%{query}%')).all()
+        menu_items = MenuItem.query.filter(MenuItem.name.ilike(f'%{query}%')).all()
+    else:
+        restaurants = []
+        menu_items = []
+
+    return render_template('searchbar.html', query=query, restaurants=restaurants, menu_items=menu_items)    
+
 @main.route('/logout')
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for('main.login'))
+    return redirect(url_for('main.home'))

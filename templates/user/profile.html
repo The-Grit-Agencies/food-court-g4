@@ -1,0 +1,47 @@
+<!-- templates/user/profile.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto mt-10 p-6 bg-white shadow-md rounded-lg">
+    <h2 class="text-2xl font-semibold text-gray-800 mb-6">Manage Your Profile</h2>
+    
+    <!-- User Info Form -->
+    <form method="POST" enctype="multipart/form-data" class="space-y-6">
+        {{ form.hidden_tag() }}
+        
+        <div>
+            <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
+            {{ form.username(class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm") }}
+        </div>
+
+        <div>
+            <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+            {{ form.email(class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm") }}
+        </div>
+
+        <div>
+            <label for="profile_picture" class="block text-sm font-medium text-gray-700">Profile Picture</label>
+            {{ form.profile_picture(class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm") }}
+        </div>
+
+        <div class="mt-4">
+            <img src="{{ url_for('static', filename='profile_pics/' ~ current_user.profile_picture) }}" alt="Profile Picture" class="w-24 h-24 rounded-full object-cover">
+        </div>
+
+       
+        <div>
+            <label for="password" class="block text-sm font-medium text-gray-700">New Password</label>
+            {{ form.password( class="mt-1 block  w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm") }}
+        </div>
+
+        <div>
+            <label for="confirm_password" class="block text-sm font-medium text-gray-700">Confirm New Password</label>
+            {{ form.confirm_password(class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm") }}
+        </div>
+
+        <div>
+            {{ form.submit(class="w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500") }}
+        </div>
+    </form>
+</div>
+{% endblock %}

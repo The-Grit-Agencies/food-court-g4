@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+
+<h2 class="text-2xl font-semibold mb-4">Your Cart</h2>
+<div class="grid grid-cols-1 gap-6 mb-8">
+    {% for item in cart_items %}
+        <div class="bg-gray-100 p-4 border border-gray-300 rounded-lg shadow-md">
+            <h3 class="text-xl font-bold mb-2">{{ item.menu_item.name }}</h3>
+            <p class="text-gray-600 mb-2">{{ item.menu_item.description }}</p>
+            <p class="text-lg font-semibold mb-2">${{ item.menu_item.price }} x {{ item.quantity }}</p>
+            <p class="text-lg font-semibold mb-2">Total: ${{ item.menu_item.price * item.quantity }}</p>
+            <form action="{{url_for('main.update_cart', cart_item_id=item.id)}}" method="POST" class="flex items-center space-x-2">
+                <input type="number" name="quantity" value="{{item.quantity}}" min="1" class="w-16 p-1 border border-gray-300 rounded">
+                <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Update</button>
+            </form>
+            <form action="{{url_for('main.remove_from_cart', cart_item_id=item.id)}}" method="POST" class="mt-2">
+                <button type="submit" class="bg-red-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Remove</button>
+
+            </form>
+        </div>
+    {% endfor %}
+</div>
+<div class="flex justify-between items-center">
+    <p class="text-xl font-bold">Total: ${{ total }}</p>
+    <a href="{{ url_for('main.checkout') }}" class="mt-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Proceed to Checkout</a>
+</div>
+{% endblock %}
