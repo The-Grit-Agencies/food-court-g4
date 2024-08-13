@@ -2,6 +2,7 @@
 {% block title %}Home{% endblock %}
 {% block content %}
 
+
 <style>
     body {
         background-color: #f0f2f5;
@@ -127,22 +128,39 @@
     }
 </style>
 
-<div class="container">
-    <div class="section-heading">
-        <h1>Welcome to The Food-Court</h1>
-    </div>
 
     <!-- <div class="text-center mb-4">
         <a href="{{ url_for('main.register') }}" class="btn btn-custom">Register</a>
         <a href="{{ url_for('main.login') }}" class="btn btn-custom-secondary">Login</a>
     </div> -->
 <!-- search bar -->
-<div class="mt-6 mx-4">
-    <form action="{{url_for('main.search')}}" method="GET" class="flex items-center">
-        <input type="text" name="q" placeholder="Search..." class="flex-grow p-2 border-gray-300 rounded-l-lg">
-        <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-r-lg">Search</button>
-    </form>
- </div>
+<div class="bg-white p-8 border border-gray-300 rounded-lg shadow-lg">
+    
+    <!-- Image Carousel Section -->
+    <div class="relative mb-8">
+        <div id="carousel" class="relative w-full h-64 overflow-hidden rounded-lg shadow-md">
+            <img src="https://img.freepik.com/free-photo/top-view-table-full-delicious-food-composition_23-2149141350.jpg?uid=R158323210&semt=ais_hybrid" alt="Menu Cover 1" class="absolute w-full h-full object-cover carousel-image">
+            <img src="https://img.freepik.com/premium-photo/high-angle-table-arrangement-with-food_1106939-89901.jpg?uid=R158323210&semt=ais_hybrid" alt="Menu Cover 2" class="absolute w-full h-full object-cover carousel-image hidden">
+            <img src="https://img.freepik.com/premium-photo/elegant-dining-room-with-crystal-chandeliers-ornate-decor-russian-restaurant-generative-ai_437323-15756.jpg?uid=R158323210&semt=ais_hybrid" alt="Menu Cover 3" class="absolute w-full h-full object-cover carousel-image hidden">
+            <img src="https://img.freepik.com/premium-photo/multiple-plates-food-restaurant-table-including-shrimp-chicken-glass-red-drink_14117-728195.jpg?uid=R158323210&semt=ais_hybrid" alt="Menu Cover 4" class="w-full h-full object-cover">
+            <img src="https://img.freepik.com/free-photo/pork-hock-german-with-sauces-dark-background_1150-45508.jpg?uid=R158323210&semt=ais_hybrid" alt="Menu Cover 5" class="w-full h-full object-cover">
+            <img src="https://img.freepik.com/free-photo/assorted-mediterranean-food_23-2147772052.jpg?uid=R158323210&semt=ais_hybrid" alt="Menu Cover 6" class="w-full h-full object-cover">
+            <img src="https://img.freepik.com/premium-photo/high-angle-table-arrangement-with-food_1106939-89901.jpg?uid=R158323210&semt=ais_hybrid" alt="Menu Cover 7" class="w-full h-full object-cover">
+
+            
+        </div>
+        <div class="absolute inset-0 flex items-center justify-center">
+            <h2 class="text-4xl font-bold text-white rounded">WELCOME TO THE FOOD-COURT</h2>
+        </div>
+    </div>
+
+    <div class="mt-6 mx-4">
+        <form action="{{url_for('main.search')}}" method="GET" class="flex items-center">
+            <input type="text" name="q" placeholder="Search..." class="flex-grow p-2 border-gray-300 rounded-l-lg">
+            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-r-lg">Search</button>
+        </form>
+    </div>
+
     <h2 class="section-heading">Menu</h2>
     <div class="row">
         {% for item in menu_items %}
@@ -184,4 +202,16 @@
     </div>
 </div>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const images = document.querySelectorAll('.carousel-image');
+        let currentIndex = 0;
+
+        setInterval(() => {
+            images[currentIndex].classList.add('hidden');
+            currentIndex = (currentIndex + 1) % images.length;
+            images[currentIndex].classList.remove('hidden');
+        }, 3000);
+    });
+</script>
 {% endblock %}
