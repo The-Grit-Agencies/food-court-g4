@@ -31,7 +31,7 @@ greenlet==3.0.3
 gunicorn==22.0.0
 honcho==1.1.0
 httplib2==0.20.2
-idna==3.3
+idna==2.10
 importlib-metadata==4.6.4
 iniconfig==2.0.0
 ipdb==0.13.13
