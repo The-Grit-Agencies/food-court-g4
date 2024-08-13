@@ -91,7 +91,6 @@ six==1.16.0
 SQLAlchemy==2.0.29
 sqlalchemy-serializer==1.4.22
 stack-data==0.6.3
-systemd==0.17.1
 systemd-python==234
 tomli==2.0.1
 traitlets==5.14.3
