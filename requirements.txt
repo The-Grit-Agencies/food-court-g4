@@ -97,7 +97,7 @@ traitlets==5.14.3
 typing_extensions==4.11.0
 #ubuntu-drivers-common==0.0.0
 #ubuntu-pro-client==8001
-unattended-upgrades==0.1
+#unattended-upgrades==0.1
 urllib3==1.26.5
 usb-creator==0.3.7
 virtualenv==20.26.2
