@@ -169,7 +169,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-body d-flex">
-                                <img src="{{ item.menu_item.image_url }}" alt="{{ item.menu_item.name }}" class="img-fluid">
+                                <img src="{{ url_for('static', filename='menu_images/' + item.menu_item.image_file) }}" alt="{{ item.name }}" class="img-fluid">
                                 <div class="flex-grow-1">
                                     <h4 class="card-title">{{ item.menu_item.name }}</h4>
                                     <p class="card-text">{{ item.menu_item.description }}</p>
