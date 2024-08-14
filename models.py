@@ -48,3 +48,10 @@ class CartItem(db.Model):
     quantity = db.Column(db.Integer, nullable=False, default=1)
     user = db.relationship('User', backref=db.backref('cart_items', lazy=True))
     menu_item = db.relationship('MenuItem', backref=db.backref('cart_items', lazy=True))
+
+  
+# Table model
+# class Table(db.Model):
+#     id = db.Column(db.Integer, primary_key=True)
+#     outlet_id=db.Column(db.Integer, db.ForeignKey("outlet.id"), nullable=False)  
+

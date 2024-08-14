@@ -47,6 +47,7 @@
         <div class="flex items-center lg:ml-auto">
             {% if current_user.is_authenticated and current_user.role == 'owner' and restaurant %}
             <div class="hidden lg:flex space-x-4 nav-item">
+                <a href="{{ url_for('main.owner_dashboard') }}" class="text-xl font-bold">Dashboard</a>
                 <a href="{{ url_for('main.manage_menu') }}" class="text-xl font-bold">Menu</a>
                 <a href="{{ url_for('main.sales_reports') }}" class="text-xl font-bold">Reports</a>
                 <a href="{{ url_for('main.owner_analytics') }}" class="text-xl font-bold">Analytics</a>
@@ -86,11 +87,12 @@
                 </svg>
             </button>
             <ul class="space-y-4">
-                <li><a href="{{ url_for('main.home') }}" class="text-xl font-bold">Home</a></li>
+                <!-- <li><a href="{{ url_for('main.home') }}" class="text-xl font-bold">Home</a></li> -->
                 
                 {% if current_user.is_authenticated %}
                     
                     {% if current_user.role == 'owner' %}
+                        <li><a href="{{ url_for('main.owner_dashboard') }}" class="text-xl font-bold">Dashboard</a></li>
                         <li><a href="{{ url_for('main.manage_menu') }}" class="text-xl font-bold">Menu</a></li>
                         <li><a href="{{ url_for('main.sales_reports') }}" class="text-xl font-bold">Reports</a></li>
                         <li><a href="{{ url_for('main.owner_analytics') }}" class="text-xl font-bold">Analytics</a></li>
