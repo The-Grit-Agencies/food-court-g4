@@ -145,11 +145,18 @@ def owner_dashboard():
         return redirect(url_for('main.home'))
     
     restaurant = Restaurant.query.filter_by(owner_id=current_user.id).first()
+    orders = Order.query.filter_by(restaurant_id=restaurant.id).all()
+    avg_order_value = db.session.query(
+    func.avg(Order.total).label('avg_order_value')
+).filter_by(restaurant_id=current_user.restaurant.id).scalar()
     return render_template('/owner/owner_dashboard.html', 
                            username=current_user.username, 
                            email=current_user.email,
                            restaurant_name=restaurant.name if restaurant else None,
-                           restaurant_contact=restaurant.contact if restaurant else None)
+                           restaurant_contact=restaurant.contact if restaurant else None,
+                           orders=orders,
+                           avg_order_value=avg_order_value
+                            )
 
 @main.route('/admin/admin_dashboard')
 @login_required
@@ -206,8 +213,8 @@ def view_orders():
         return redirect(url_for('main.home'))
     
     restaurant = current_user.restaurant
-    # orders = Order.query.filter_by(restaurant_id=restaurant.id).all()
-    orders = Order.query.all()
+    orders = Order.query.filter_by(restaurant_id=restaurant.id).all()
+    #orders = Order.query.all()
     return render_template('/owner/view_orders.html', orders=orders, restaurant=restaurant)
 
 @main.route('/owner/orders/<int:order_id>/update', methods=['GET', 'POST'])

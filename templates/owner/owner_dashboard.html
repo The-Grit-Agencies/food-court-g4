@@ -28,7 +28,7 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-4 md:mb-6">
             <div class="bg-white shadow-lg rounded-lg p-4 md:p-6">
                 <h3 class="text-lg md:text-xl font-semibold mb-2">Revenue</h3>
-                <p>$XX,XXX</p>
+                <p>ksh {{ avg_order_value }}</p>
                 <small class="text-gray-500">This month</small>
             </div>
             <div class="bg-white shadow-lg rounded-lg p-4 md:p-6">
@@ -56,15 +56,20 @@
                             <th class="py-2 px-4 border-b">Status</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <!-- Sample data -->
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        {% for order in orders %}
                         <tr>
-                            <td class="py-2 px-4 border-b">001</td>
-                            <td class="py-2 px-4 border-b">John Doe</td>
-                            <td class="py-2 px-4 border-b">Pizza, Coke</td>
-                            <td class="py-2 px-4 border-b">$15</td>
-                            <td class="py-2 px-4 border-b">Completed</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ order.id }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ order.customer.username }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {% for item in order.order_items %}
+                                    {{ item.menu_item }}{% if not loop.last %}, {% endif %}
+                                {% endfor %}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ order.total }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ order.status }}</td>
                         </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>
