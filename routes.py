@@ -113,6 +113,30 @@ def login_admin():
             flash('Invalid credentials', 'danger')
     return render_template('/admin/login_admin.html', form=form)
 
+@main.route('/admin', methods=['GET', 'POST'])
+def admin():
+    register_form = AdminRegistrationForm()
+    login_form = LoginForm()
+    
+    if register_form.submit.data and register_form.validate_on_submit():
+        hashed_password = generate_password_hash(register_form.password.data, method='pbkdf2:sha256')
+        user = User(username=register_form.username.data, email=register_form.email.data, password=hashed_password, role='admin')
+        db.session.add(user)
+        db.session.commit()
+        flash('Admin registered successfully!', 'success')
+        return redirect(url_for('main.admin'))
+
+    if login_form.submit.data and login_form.validate_on_submit():
+        user = User.query.filter_by(email=login_form.email.data, role='admin').first()
+        if user and check_password_hash(user.password, login_form.password.data):
+            login_user(user, remember=login_form.remember.data)
+            return redirect(url_for('main.admin_dashboard'))
+        else:
+            flash('Invalid credentials', 'danger')
+
+    return render_template('admin/admin.html', login_form=login_form, register_form=register_form)
+
+
 @main.route('/owner/owner_dashboard')
 @login_required
 def owner_dashboard():
