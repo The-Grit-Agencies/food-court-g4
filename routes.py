@@ -206,7 +206,8 @@ def view_orders():
         return redirect(url_for('main.home'))
     
     restaurant = current_user.restaurant
-    orders = Order.query.filter_by(restaurant_id=restaurant.id).all()
+    # orders = Order.query.filter_by(restaurant_id=restaurant.id).all()
+    orders = Order.query.all()
     return render_template('/owner/view_orders.html', orders=orders, restaurant=restaurant)
 
 @main.route('/owner/orders/<int:order_id>/update', methods=['GET', 'POST'])
@@ -536,6 +537,12 @@ def search():
         menu_items = []
 
     return render_template('searchbar.html', query=query, restaurants=restaurants, menu_items=menu_items)    
+
+@main.route('/user/restaurant/<int:restaurant_id>/menu')
+def restaurant_menu(restaurant_id):
+    restaurant = Restaurant.query.get(restaurant_id)
+    menu_item = MenuItem.query.filter_by(restaurant_id=restaurant_id).all()
+    return render_template('user/restaurant_menu.html', restaurant=restaurant, menu_item=menu_item)
 
 @main.route('/logout')
 @login_required
