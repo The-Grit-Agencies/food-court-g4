@@ -40,7 +40,7 @@
                     <img src="{{ url_for('static', filename='menu_images/' ~ item.image_file) }}" alt="{{ item.name }}" class="w-full h-32 object-cover mb-2">
                     <h4 class="text-lg font-bold">{{ item.name }}</h4>
                     <p>{{ item.description }}</p>
-                    <p class="font-bold">${{ item.price }}</p>
+                    <p class="font-bold">ksh {{ item.price }}</p>
                     <p>{{ item.category }}</p>
                     <a href="{{ url_for('main.edit_menu_item', menu_item_id=item.id) }}" class="text-blue-500">Edit</a>
                     <!-- Delete Button -->
