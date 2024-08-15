@@ -7,7 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <style>
         .header {
-            position: fixed;
+           
             top: 0;
             left: 0;
             right: 0;
@@ -40,12 +40,14 @@
             {% if current_user.is_authenticated and current_user.role == 'owner' and restaurant %}
                 {{ restaurant.name }}
             {% else %}
-                Grit 
+                FoodCourt 
             {% endif %}
         </a>
         
         <div class="flex items-center lg:ml-auto">
-            {% if current_user.is_authenticated and current_user.role == 'owner' and restaurant %}
+            {% if current_user.is_authenticated %}
+                    
+                    {% if current_user.role == 'owner' %}
             <div class="hidden lg:flex space-x-4 nav-item">
                 <a href="{{ url_for('main.owner_dashboard') }}" class="text-xl font-bold">Dashboard</a>
                 <a href="{{ url_for('main.manage_menu') }}" class="text-xl font-bold">Menu</a>
@@ -53,30 +55,33 @@
                 <a href="{{ url_for('main.owner_analytics') }}" class="text-xl font-bold">Analytics</a>
                 <a href="{{ url_for('main.view_orders') }}" class="text-xl font-bold">Orders</a>
                 <a href="{{ url_for('main.owner_profile') }}" class="text-xl font-bold">Profile</a>
+                <a href="{{ url_for('main.logout') }}" class="text-xl font-bold">Logout</a>
                 
-
+                {% elif current_user.role == 'admin' %}
+                <li><a href="{{ url_for('main.admin_dashboard') }}" class="text-xl font-bold">Admin Dashboard</a></li>
+            {% endif %}
             </div>
+            {% if current_user.is_authenticated and current_user.role == 'owner' and restaurant %}
                 {% if restaurant.logo %}
                 <button id="avatar-button" class="focus:outline-none">
                     <img src="{{ url_for('static', filename='logos/' ~ restaurant.logo) }}" alt="User Avatar" class="w-8 h-8 rounded-full">
                 </button>
-{% endif %}
+                {% endif %}
+                {% else %}
+                {% endif %}
                 
                 <ul id="avatar-menu" class="avatar-menu bg-white border border-gray-200 rounded-lg shadow-lg hidden">
                     <li><a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Profile</a></li>
                     <li><a href="{{ url_for('main.logout') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Logout</a></li>
                 </ul>
                 
-            {% else %}
-                <div class="hidden lg:flex space-x-4 nav-item">
-                    <a href="{{ url_for('main.login') }}" class="hover:underline">User Login</a>
-                    <a href="{{ url_for('main.login_owner') }}" class="hover:underline">Owner Login</a>
-                    <!-- <a href="{{ url_for('main.login_admin') }}" class="hover:underline">Admin Login</a> -->
-                    <a href="{{ url_for('main.admin') }}" class="hover:underline">Admin</a>
-                    <a href="{{ url_for('main.register') }}" class="hover:underline">Register</a>
-                    <a href="{{ url_for('main.register_owner') }}" class="hover:underline">Own Register</a>
-                    <!-- <a href="{{ url_for('main.register_admin') }}" class="hover:underline">Ad Register</a> -->
-                </div>
+                {% else %}
+                <a href="{{ url_for('main.login') }}">User Login</a>
+                <a href="{{ url_for('main.login_owner') }}">Owner Login</a>
+              <a href="{{ url_for('main.login_admin') }}">Admin Login</a>
+               <a href="{{ url_for('main.register') }}">Register</a>
+               <a href="{{ url_for('main.register_owner') }}">Own Register</a>
+                <!-- <li><a href="{{ url_for('main.register_admin') }}">Ad Register</a></li> -->
             {% endif %}
         </div>
     </nav>
