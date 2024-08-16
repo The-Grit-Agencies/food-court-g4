@@ -113,6 +113,30 @@ def login_admin():
             flash('Invalid credentials', 'danger')
     return render_template('/admin/login_admin.html', form=form)
 
+@main.route('/admin', methods=['GET', 'POST'])
+def admin():
+    register_form = AdminRegistrationForm()
+    login_form = LoginForm()
+    
+    if register_form.submit.data and register_form.validate_on_submit():
+        hashed_password = generate_password_hash(register_form.password.data, method='pbkdf2:sha256')
+        user = User(username=register_form.username.data, email=register_form.email.data, password=hashed_password, role='admin')
+        db.session.add(user)
+        db.session.commit()
+        flash('Admin registered successfully!', 'success')
+        return redirect(url_for('main.admin'))
+
+    if login_form.submit.data and login_form.validate_on_submit():
+        user = User.query.filter_by(email=login_form.email.data, role='admin').first()
+        if user and check_password_hash(user.password, login_form.password.data):
+            login_user(user, remember=login_form.remember.data)
+            return redirect(url_for('main.admin_dashboard'))
+        else:
+            flash('Invalid credentials', 'danger')
+
+    return render_template('admin/admin.html', login_form=login_form, register_form=register_form)
+
+
 @main.route('/owner/owner_dashboard')
 @login_required
 def owner_dashboard():
@@ -121,11 +145,18 @@ def owner_dashboard():
         return redirect(url_for('main.home'))
     
     restaurant = Restaurant.query.filter_by(owner_id=current_user.id).first()
+    orders = Order.query.filter_by(restaurant_id=restaurant.id).all()
+    avg_order_value = db.session.query(
+    func.avg(Order.total).label('avg_order_value')
+).filter_by(restaurant_id=current_user.restaurant.id).scalar()
     return render_template('/owner/owner_dashboard.html', 
                            username=current_user.username, 
                            email=current_user.email,
                            restaurant_name=restaurant.name if restaurant else None,
-                           restaurant_contact=restaurant.contact if restaurant else None)
+                           restaurant_contact=restaurant.contact if restaurant else None,
+                           orders=orders,
+                           avg_order_value=avg_order_value
+                            )
 
 @main.route('/admin/admin_dashboard')
 @login_required
@@ -183,6 +214,7 @@ def view_orders():
     
     restaurant = current_user.restaurant
     orders = Order.query.filter_by(restaurant_id=restaurant.id).all()
+    #orders = Order.query.all()
     return render_template('/owner/view_orders.html', orders=orders, restaurant=restaurant)
 
 @main.route('/owner/orders/<int:order_id>/update', methods=['GET', 'POST'])
@@ -512,6 +544,12 @@ def search():
         menu_items = []
 
     return render_template('searchbar.html', query=query, restaurants=restaurants, menu_items=menu_items)    
+
+@main.route('/user/restaurant/<int:restaurant_id>/menu')
+def restaurant_menu(restaurant_id):
+    restaurant = Restaurant.query.get(restaurant_id)
+    menu_item = MenuItem.query.filter_by(restaurant_id=restaurant_id).all()
+    return render_template('user/restaurant_menu.html', restaurant=restaurant, menu_item=menu_item)
 
 @main.route('/logout')
 @login_required

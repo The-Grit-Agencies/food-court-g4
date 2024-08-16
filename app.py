@@ -15,7 +15,7 @@ def create_app():
     app.config.from_object(Config)
     migrate = Migrate(app, db)
     app.config['SECRET_KEY'] = 'wewewacha'
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URI')
+    app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{os.path.join(base_dir, "main.db")}'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['UPLOAD_FOLDER'] = 'static/menu_images'
     app.config['LOGO_UPLOAD_FOLDER'] = 'static/logos'

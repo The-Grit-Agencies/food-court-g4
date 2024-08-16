@@ -3,27 +3,87 @@
 {% block title %}Owner Dashboard{% endblock %}
 
 {% block content %}
-<div class="flex  justify-center  bg-gray-100">
-    <div class="w-full max-w-md p-8 bg-white shadow-lg rounded-lg">
-        <h2 class="text-2xl font-bold mb-4">Welcome,{{ username }}</h2>
-        <p>Manage your properties and settings here.</p>
-        <br>
-        <div class="space-y-4">
-            <div>
-                <label class="block font-semibold">Username:</label>
-                <p >{{ username }}</p>
+<div class="flex flex-col md:flex-row">
+    <!-- Sidebar -->
+    <!-- <aside class="w-full md:w-1/5 bg-gray-800 text-white h-auto md:h-screen p-4">
+        <ul class="space-y-4">
+            <li><a href="#" class="block p-2 rounded hover:bg-gray-700">Dashboard Overview</a></li>
+            <li><a href="{{ url_for('main.view_orders') }}" class="block p-2 rounded hover:bg-gray-700">Orders</a></li>
+            <li><a href="{{ url_for('main.manage_menu') }}" class="block p-2 rounded hover:bg-gray-700">Menu Management</a></li>
+            <li><a href="{{ url_for('main.sales_reports') }}" class="block p-2 rounded hover:bg-gray-700">Reports</a></li>
+            <li><a href="{{ url_for('main.owner_analytics') }}" class="block p-2 rounded hover:bg-gray-700">Analytics</a></li>
+            <li><a href="{{ url_for('main.owner_profile') }}" class="block p-2 rounded hover:bg-gray-700">Profile</a></li>
+        </ul>
+    </aside> -->
+
+    <!-- Main Content Area -->
+    <div class="flex-1 p-4 md:p-8 bg-gray-100">
+        <!-- Top Section (Welcome and Overview) -->
+        <div class="bg-white shadow-lg rounded-lg p-4 md:p-6 mb-4 md:mb-6">
+            <h2 class="text-xl md:text-2xl font-bold mb-4">Welcome, {{ username }}</h2>
+            <p>Manage your properties and settings here.</p>
+        </div>
+
+        <!-- Middle Section (Cards) -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-4 md:mb-6">
+            <div class="bg-white shadow-lg rounded-lg p-4 md:p-6">
+                <h3 class="text-lg md:text-xl font-semibold mb-2">Revenue</h3>
+                <p>ksh {{ avg_order_value }}</p>
+                <small class="text-gray-500">This month</small>
             </div>
-            <div>
-                <label class="block font-semibold">Email:</label>
-                <p >{{ email }}</p>
+            <div class="bg-white shadow-lg rounded-lg p-4 md:p-6">
+                <h3 class="text-lg md:text-xl font-semibold mb-2">Orders</h3>
+                <p>XXX Orders</p>
+                <small class="text-gray-500">This month</small>
             </div>
-            <div>
-                <label class="block font-semibold">Restaurant Name:</label>
-                <p >{{ restaurant_name }}</p>
+            <div class="bg-white shadow-lg rounded-lg p-4 md:p-6">
+                <h3 class="text-lg md:text-xl font-semibold mb-2">Popular Items</h3>
+                <p>Burger, Pizza, Sushi</p>
             </div>
-            <div>
-                <label class="block font-semibold">Restaurant Contact:</label>
-                <p >{{ restaurant_contact }}</p>
+        </div>
+
+        <!-- Middle Section (Tables & Graphs) -->
+        <div class="bg-white shadow-lg rounded-lg p-4 md:p-6 mb-4 md:mb-6">
+            <h3 class="text-lg md:text-xl font-semibold mb-4">Recent Orders</h3>
+            <div class="overflow-x-auto">
+                <table class="min-w-full bg-white">
+                    <thead>
+                        <tr>
+                            <th class="py-2 px-4 border-b">Order ID</th>
+                            <th class="py-2 px-4 border-b">Customer</th>
+                            <th class="py-2 px-4 border-b">Items</th>
+                            <th class="py-2 px-4 border-b">Total</th>
+                            <th class="py-2 px-4 border-b">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        {% for order in orders %}
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ order.id }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ order.customer.username }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {% for item in order.order_items %}
+                                    {{ item.menu_item }}{% if not loop.last %}, {% endif %}
+                                {% endfor %}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ order.total }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ order.status }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Bottom Section (Additional Tools) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+            <div class="bg-white shadow-lg rounded-lg p-4 md:p-6">
+                <h3 class="text-lg md:text-xl font-semibold mb-2">Manage Menu Items</h3>
+                <!-- Placeholder for menu management -->
+            </div>
+            <div class="bg-white shadow-lg rounded-lg p-4 md:p-6">
+                <h3 class="text-lg md:text-xl font-semibold mb-2">Low Stock Alerts</h3>
+                <!-- Placeholder for inventory alerts -->
             </div>
         </div>
     </div>
