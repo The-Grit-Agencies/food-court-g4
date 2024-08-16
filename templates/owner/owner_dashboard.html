@@ -28,18 +28,24 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-4 md:mb-6">
             <div class="bg-white shadow-lg rounded-lg p-4 md:p-6">
                 <h3 class="text-lg md:text-xl font-semibold mb-2">Revenue</h3>
-                <p>ksh {{ avg_order_value }}</p>
+                <p>ksh {{ avg_order_value | round(2) }}</p>
                 <small class="text-gray-500">This month</small>
-            </div>
+            </div> 
             <div class="bg-white shadow-lg rounded-lg p-4 md:p-6">
                 <h3 class="text-lg md:text-xl font-semibold mb-2">Orders</h3>
-                <p>XXX Orders</p>
+                <p>{{total_orders}}</p>
                 <small class="text-gray-500">This month</small>
             </div>
+           
+           
+            
             <div class="bg-white shadow-lg rounded-lg p-4 md:p-6">
                 <h3 class="text-lg md:text-xl font-semibold mb-2">Popular Items</h3>
-                <p>Burger, Pizza, Sushi</p>
+                {% for item in popular_items [:2] %}
+                <p>{{ item.name }}</p>
+                {% endfor %}
             </div>
+           
         </div>
 
         <!-- Middle Section (Tables & Graphs) -->

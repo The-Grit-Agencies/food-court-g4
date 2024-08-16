@@ -143,9 +143,16 @@ def owner_dashboard():
     if current_user.role != 'owner':
         flash('Access unauthorized!', 'danger')
         return redirect(url_for('main.home'))
+    popular_items = db.session.query(
+        MenuItem.name,
+        func.count(Order.id).label('order_count')
+    ).join(Order, Order.restaurant_id == current_user.restaurant.id
+    ).group_by(MenuItem.name).order_by(func.count(Order.id).desc()).all()
+    
     
     restaurant = Restaurant.query.filter_by(owner_id=current_user.id).first()
     orders = Order.query.filter_by(restaurant_id=restaurant.id).all()
+    total_orders=len(orders)
     avg_order_value = db.session.query(
     func.avg(Order.total).label('avg_order_value')
 ).filter_by(restaurant_id=current_user.restaurant.id).scalar()
@@ -154,8 +161,8 @@ def owner_dashboard():
                            email=current_user.email,
                            restaurant_name=restaurant.name if restaurant else None,
                            restaurant_contact=restaurant.contact if restaurant else None,
-                           orders=orders,
-                           avg_order_value=avg_order_value
+                           orders=orders, popular_items=popular_items, 
+                           avg_order_value=avg_order_value, total_orders=total_orders
                             )
 
 @main.route('/admin/admin_dashboard')
