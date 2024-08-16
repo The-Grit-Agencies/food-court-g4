@@ -32,7 +32,7 @@ def create_app():
     login_manager.init_app(app)
     login_manager.login_view = 'main.login'
 
-    from .models import User
+    from models import User
 
     @login_manager.user_loader
     def load_user(user_id):
@@ -41,7 +41,7 @@ def create_app():
     with app.app_context():
         db.create_all()
 
-    from .routes import main
+    from routes import main
     app.register_blueprint(main)
 
     return app

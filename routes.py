@@ -3,9 +3,9 @@ from flask_login import login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 import os
-from . import db
-from .models import User, Restaurant, MenuItem, Order, CartItem
-from .forms import RegistrationForm, LoginForm, UserProfileForm, OwnerRegistrationForm, AdminRegistrationForm, MenuItemForm, OrderStatusForm, RestaurantProfileForm, EditMenuItemForm # Add OrderStatusForm here
+from app import db
+from models import User, Restaurant, MenuItem, Order, CartItem
+from forms import RegistrationForm, LoginForm, UserProfileForm, OwnerRegistrationForm, AdminRegistrationForm, MenuItemForm, OrderStatusForm, RestaurantProfileForm, EditMenuItemForm # Add OrderStatusForm here
 from sqlalchemy import func
 
 
