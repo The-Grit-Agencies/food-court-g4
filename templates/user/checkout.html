@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Checkout{% endblock %}
+{% block content %}
+
+<style>
+    body {
+        background-color: #f0f2f5;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .checkout-container {
+        background-color: #ffffff;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .checkout-container h2 {
+        color: #333;
+        font-size: 1.75rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .checkout-container select {
+        border-radius: 30px;
+        border: 1px solid #ccc;
+        padding: 10px 20px;
+        font-size: 1rem;
+        transition: border-color 0.3s ease;
+    }
+
+    .checkout-container select:focus {
+        border-color: #800000;
+    }
+
+    .checkout-container button {
+        background-color: #800000;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 30px;
+        font-weight: bold;
+        font-size: 1rem;
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .checkout-container button:hover {
+        background-color: #a00000;
+        box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.2);
+    }
+</style>
+
+<div class="checkout-container max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-lg">
+    <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Checkout</h2>
+    <form action="{{ url_for('main.checkout') }}" method="POST">
+        <div class="mb-5">
+            <label for="payment_method" class="block text-gray-600 text-sm font-semibold mb-2">Payment Method:</label>
+            <select id="payment_method" name="payment_method" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                <option value="mpesa">M-PESA</option>
+                <option value="cash">Cash</option>
+            </select>
+        </div>
+        <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-full transition duration-300">Complete Purchase</button>
+    </form>
+</div>
+
+{% endblock %}

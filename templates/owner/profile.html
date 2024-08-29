@@ -1,0 +1,58 @@
+{% extends "base1.html" %}
+{% block content %}
+<div class="flex items-center justify-center min-h-screen bg-gray-100">
+    <div class="w-full max-w-lg p-8 bg-white shadow-lg rounded-lg">
+        <h1 class="text-2xl font-semibold mb-6">Update Restaurant Profile</h1>
+        
+        <div class="mb-6">
+            <h2 class="text-xl font-semibold">Current Profile</h2>
+            <div class="mt-4">
+                <div class="flex items-center mb-4">
+                    {% if restaurant.logo %}
+                        <img src="{{ url_for('static', filename='logos/' ~ restaurant.logo) }}" alt="Restaurant Logo" class="w-16 h-16 rounded-full mr-4">
+                    {% endif %}
+                    <div>
+                        <p class="text-lg font-semibold">{{ restaurant.name }}</p>
+                        <p class="text-gray-600">{{ restaurant.contact }}</p>
+                        <p class="text-gray-600">{{ restaurant.address }}</p>
+                        <p class="text-gray-600">{{ restaurant.opening_hours }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <form method="POST" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
+            <div class="mb-4">
+                <label for="{{ form.name.id }}" class="block text-gray-700 font-medium mb-2">{{ form.name.label }}</label>
+                {{ form.name(class="form-input w-full border border-gray-300 rounded-lg p-2") }}
+            </div>
+            <div class="mb-4">
+                <label for="{{ form.contact.id }}" class="block text-gray-700 font-medium mb-2">{{ form.contact.label }}</label>
+                {{ form.contact(class="form-input w-full border border-gray-300 rounded-lg p-2") }}
+            </div>
+            <div class="mb-4">
+                <label for="{{ form.address.id }}" class="block text-gray-700 font-medium mb-2">{{ form.address.label }}</label>
+                {{ form.address(class="form-input w-full border border-gray-300 rounded-lg p-2") }}
+            </div>
+            <div class="mb-4">
+                <label for="{{ form.opening_hours.id }}" class="block text-gray-700 font-medium mb-2">{{ form.opening_hours.label }}</label>
+                {{ form.opening_hours(class="form-input w-full border border-gray-300 rounded-lg p-2") }}
+            </div>
+            <div class="mb-4">
+                <label for="{{ form.logo.id }}" class="block text-gray-700 font-medium mb-2">{{ form.logo.label }}</label>
+                {{ form.logo(class="form-input border border-gray-300 rounded-lg p-2") }}
+            </div>
+            {% if restaurant.logo %}
+                <div class="mb-4">
+                    <img src="{{ url_for('static', filename='logos/' ~ restaurant.logo) }}" alt="Logo" class="w-32 h-32 object-cover rounded-lg">
+                </div>
+            {% endif %}
+            <div class="mt-6">
+                {{ form.submit(class="bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500") }}
+            </div>
+        </form>
+        
+    </div>
+</div>
+{% endblock %}

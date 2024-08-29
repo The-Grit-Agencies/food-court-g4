@@ -1,0 +1,16 @@
+{% extends "base1.html" %}
+{% block content %}
+<div class="flex flex-col items-center min-h-screen bg-gray-100 py-8 px-4">
+    <div class="w-full max-w-4xl bg-white shadow-lg rounded-lg p-6">
+        <h1 class="text-3xl font-bold mb-4 text-gray-800">Sales Reports</h1>
+        <div class="space-y-4">
+            <p class="text-lg font-medium text-gray-700">
+                <span class="font-semibold">Total Sales:</span> Ksh {{ total_sales }}
+            </p>
+            <p class="text-lg font-medium text-gray-700">
+                <span class="font-semibold">Total Orders:</span> {{ total_orders }}
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

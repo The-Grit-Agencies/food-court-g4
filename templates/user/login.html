@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+{% block content %}
+<div class="max-w-md mx-auto bg-white p-8 border border-gray-300 rounded-lg shadow-lg">
+    <h2 class="text-2xl font-bold mb-4">Login</h2>
+    <form method="POST" action="{{ url_for('main.login') }}">
+        {{ form.hidden_tag() }}
+        <div class="mb-4">
+            {{ form.email.label(class="block text-gray-700") }}
+            {{ form.email(class="w-full p-2 border border-gray-300 rounded-lg") }}
+            {% for error in form.email.errors %}
+                <span class="text-red-500 text-sm">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div class="mb-4">
+            {{ form.password.label(class="block text-gray-700") }}
+            {{ form.password(class="w-full p-2 border border-gray-300 rounded-lg") }}
+            {% for error in form.password.errors %}
+                <span class="text-red-500 text-sm">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div class="mb-4">
+            {{ form.remember(class="mr-2") }} {{ form.remember.label(class="inline-block text-gray-700") }}
+        </div>
+        <div class="mb-4">
+            {{ form.submit(class="w-full p-2 bg-blue-500 text-white rounded-lg") }}
+        </div>
+    </form>
+</div>
+{% endblock %}

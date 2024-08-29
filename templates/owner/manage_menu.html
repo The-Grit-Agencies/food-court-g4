@@ -1,0 +1,57 @@
+{% extends "base1.html" %}
+
+{% block title %}Manage Menu{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-center min-h-screen bg-gray-100">
+    <div class="w-full max-w-3xl p-8 bg-white shadow-lg rounded-lg">
+        <h2 class="text-2xl font-bold mb-4">Manage Menu</h2>
+        <form method="POST" action="{{ url_for('main.manage_menu') }}" enctype="multipart/form-data" class="space-y-4">
+            {{ form.hidden_tag() }}
+            <div>
+                {{ form.name.label(class="block mb-1") }} 
+                {{ form.name(class="w-full p-2 border border-gray-300 rounded") }}
+            </div>
+            <div>
+                {{ form.description.label(class="block mb-1") }} 
+                {{ form.description(class="w-full p-2 border border-gray-300 rounded") }}
+            </div>
+            <div>
+                {{ form.price.label(class="block mb-1") }} 
+                {{ form.price(class="w-full p-2 border border-gray-300 rounded") }}
+            </div>
+            <div>
+                {{ form.category.label(class="block mb-1") }} 
+                {{ form.category(class="w-full p-2 border border-gray-300 rounded") }}
+            </div>
+            <div>
+                {{ form.image.label(class="block mb-1") }} 
+                {{ form.image(class="w-full p-2 border border-gray-300 rounded") }}
+            </div>
+            <div>
+                {{ form.submit(class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600") }}
+            </div>
+        </form>
+        <div class="mt-8">
+            <h3 class="text-xl font-bold mb-4">Menu Items</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {% for item in menu_items %}
+                <div class="border border-gray-300 rounded p-4">
+                    <img src="{{ url_for('static', filename='menu_images/' ~ item.image_file) }}" alt="{{ item.name }}" class="w-full h-32 object-cover mb-2">
+                    <h4 class="text-lg font-bold">{{ item.name }}</h4>
+                    <p>{{ item.description }}</p>
+                    <p class="font-bold">ksh {{ item.price }}</p>
+                    <p>{{ item.category }}</p>
+                    <a href="{{ url_for('main.edit_menu_item', menu_item_id=item.id) }}" class="text-blue-500">Edit</a>
+                    <!-- Delete Button -->
+                    <form method="POST" action="{{ url_for('main.delete_menu_item', menu_item_id=item.id) }}" style="display:inline;">
+                        {{ form.hidden_tag() }}
+                        <button type="submit" class="text-red-500 ml-4">Delete</button>
+                    </form>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,58 @@
+<!-- templates/owner/analytics.html -->
+{% extends "base1.html" %}
+
+{% block content %}
+    <div class="container mx-auto p-4">
+        <h2 class="text-3xl font-bold mb-6">Advanced Analytics</h2>
+
+        <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+            <h3 class="text-2xl font-semibold mb-4">Sales Trends</h3>
+            <ul class="list-disc pl-5">
+                {% for trend in sales_trends %}
+                    <li class="mb-2">Date: <span class="font-medium">{{ trend.date }}</span> - Total Sales: <span class="font-medium">Ksh {{ trend.total_sales }}</span></li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+            <h3 class="text-2xl font-semibold mb-4">Popular Items</h3>
+            <ul class="list-disc pl-5">
+                {% for item in popular_items %}
+                    <li class="mb-2">Item: <span class="font-medium">{{ item.name }}</span> - Orders: <span class="font-medium">{{ item.order_count }}</span></li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+            <h3 class="text-2xl font-semibold mb-4">Peak Ordering Times</h3>
+            <ul class="list-disc pl-5">
+                {% for time in peak_ordering_times %}
+                    <li class="mb-2">Hour: <span class="font-medium">{{ time.hour }}</span> - Orders: <span class="font-medium">{{ time.order_count }}</span></li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+            <h3 class="text-2xl font-semibold mb-4">Frequent Customers</h3>
+            <ul class="list-disc pl-5">
+                {% for customer in frequent_customers %}
+                    <li class="mb-2">Customer: <span class="font-medium">{{ customer.username }}</span> - Orders: <span class="font-medium">{{ customer.order_count }}</span></li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+            <h3 class="text-2xl font-semibold mb-4">Average Order Value</h3>
+            <p class="text-lg font-medium">Ksh {{ avg_order_value | round(2)}}</p>
+        </div>
+
+        <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+            <h3 class="text-2xl font-semibold mb-4">Repeat Orders</h3>
+            <ul class="list-disc pl-5">
+                {% for repeat in repeat_orders %}
+                    <li class="mb-2">Customer: <span class="font-medium">{{ repeat.username }}</span> - Repeat Orders: <span class="font-medium">{{ repeat.order_count }}</span></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+{% endblock %}
