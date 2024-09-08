@@ -40,4 +40,4 @@ Thanks to the following people who have contributed to this project:
 
 Below is a screenshot of the **Restaurant-Management-System** 
 
-![Home]([https://i.postimg.cc/XvwvkPF2/Screenshot-from-2024-09-08-20-03-25.png "Grit-Club Waiter Dashboard"](https://i.postimg.cc/P5dhkq8M/Screenshot-from-2024-09-08-20-18-07.png))
+![Home]([https://i.postimg.cc/P5dhkq8M/Screenshot-from-2024-09-08-20-18-07.png]
